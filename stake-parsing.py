@@ -37,14 +37,23 @@ if __name__ == "__main__":
         exit(1)
 
     if arguments["--stake"]:
-        staking_query = "with rewards AS (select reward.epoch_no, pool_hash.view as delegated_pool, " \
-                        + "reward.amount / 1E6 as ada, epoch_no + 2 as epoch_paid, epoch.start_time as paid_time " \
+        staking_query = "with rewards AS (select reward.earned_epoch, pool_hash.view as delegated_pool, " \
+                        + "reward.amount / 1E6 as ada, spendable_epoch as epoch_paid, epoch.start_time as paid_time " \
                         + "from reward inner join stake_address on reward.addr_id = stake_address.id " \
                         + "inner join pool_hash on reward.pool_id = pool_hash.id " \
-                        + "inner join epoch on (reward.epoch_no + 2) = epoch.no " \
+                        + "inner join epoch on (reward.spendable_epoch) = epoch.no " \
                         + f"where stake_address.view = '{arguments['--stake']}' " \
-                        + "order by epoch_no asc) select * from rewards " \
+                        + "order by earned_epoch asc) select * from rewards " \
                         + f"where paid_time >= '{arguments['--from']}' and paid_time <= '{arguments['--to']}'"
+        # Old query < cardano-db-sync 11.0.0
+        # staking_query = "with rewards AS (select reward.epoch_no, pool_hash.view as delegated_pool, " \
+        #                 + "reward.amount / 1E6 as ada, epoch_no + 2 as epoch_paid, epoch.start_time as paid_time " \
+        #                 + "from reward inner join stake_address on reward.addr_id = stake_address.id " \
+        #                 + "inner join pool_hash on reward.pool_id = pool_hash.id " \
+        #                 + "inner join epoch on (reward.epoch_no + 2) = epoch.no " \
+        #                 + f"where stake_address.view = '{arguments['--stake']}' " \
+        #                 + "order by epoch_no asc) select * from rewards " \
+        #                 + f"where paid_time >= '{arguments['--from']}' and paid_time <= '{arguments['--to']}'"
         try:
             sql_result = subprocess.run(
                 f'psql -U postgres cdbsync -c "COPY ({staking_query}) TO STDOUT WITH CSV HEADER"',
@@ -82,7 +91,9 @@ if __name__ == "__main__":
                 row[header["ada"]],
                 "",
                 "",
-                f"Stake rewards for epoch {row[header['epoch_no']]} to pool {row[header['delegated_pool']]}"
+                # Old query < cardano-db-sync 11.0.0
+                # f"Stake rewards for epoch {row[header['epoch_no']]} to pool {row[header['delegated_pool']]}"
+                f"Stake rewards for epoch {row[header['earned_epoch']]} to pool {row[header['delegated_pool']]}"
             ]
         outwriter.writerow(rowout)
     outfile.close()
