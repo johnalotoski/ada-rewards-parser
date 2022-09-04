@@ -40,6 +40,8 @@
             python3Packages.ipython
           ];
         };
+
+        devShell = devShells.default;
       }
     );
 }
