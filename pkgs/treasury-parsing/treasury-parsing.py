@@ -45,7 +45,7 @@ if __name__ == "__main__":
                          + f"time >= '{arguments['--from']}' and time <= '{arguments['--to']}'"
         try:
             sql_result = subprocess.run(
-                f'psql -U postgres cdbsync -c "COPY ({treasury_query}) TO STDOUT WITH CSV HEADER"',
+                f'psql -U postgres cexplorer -c "COPY ({treasury_query}) TO STDOUT WITH CSV HEADER"',
                 shell=True,
                 check=False,
                 universal_newlines=True,

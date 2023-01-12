@@ -56,7 +56,7 @@ if __name__ == "__main__":
         #                 + f"where paid_time >= '{arguments['--from']}' and paid_time <= '{arguments['--to']}'"
         try:
             sql_result = subprocess.run(
-                f'psql -U postgres cdbsync -c "COPY ({staking_query}) TO STDOUT WITH CSV HEADER"',
+                f'psql -U postgres cexplorer -c "COPY ({staking_query}) TO STDOUT WITH CSV HEADER"',
                 shell=True,
                 check=False,
                 universal_newlines=True,
