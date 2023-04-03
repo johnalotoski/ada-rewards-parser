@@ -21,6 +21,8 @@
             text = builtins.readFile ./pkgs/stake-addr/stake-addr.sh;
           };
 
+          bf-stake-parsing = pkgs.callPackage ./pkgs/bf-stake-parsing {};
+
           stake-parsing = pkgs.callPackage ./pkgs/stake-parsing {};
 
           treasury-parsing = pkgs.callPackage ./pkgs/treasury-parsing {};
@@ -31,6 +33,7 @@
             mypy
             packages.bech32
             packages.stake-addr
+            packages.bf-stake-parsing
             packages.stake-parsing
             packages.treasury-parsing
             python3
