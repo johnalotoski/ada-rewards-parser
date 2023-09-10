@@ -3,17 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
-    cardano-node.url = "github:input-output-hk/cardano-node?tag=1.34.3";
+    capkgs.url = "github:input-output-hk/capkgs";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, cardano-node }:
+  outputs = { self, nixpkgs, flake-utils, capkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
         packages = {
-          bech32 = cardano-node.packages.${system}.bech32;
+          bech32 = capkgs.packages.${system}.bech32-exe-bech32-1-1-2-input-output-hk-cardano-node-8-1-2;
 
           stake-addr = pkgs.writeShellApplication {
             name = "stake-addr";
